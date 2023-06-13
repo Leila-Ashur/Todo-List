@@ -1,0 +1,24 @@
+body{
+  text-align: center;
+  margin-top: 40px;
+}
+.completed {
+    text-decoration: line-through;
+    width: 200px;
+    
+  }
+  #deadlineInput{
+    padding: 20px 50px;
+    border-radius: 5px;
+  }
+  #addButton{
+    padding: 10px 20px;
+    border-radius: 5px;
+  }
+  button{
+    padding: 10px 20px;
+    border-radius: 5px;
+   
+    
+  }
+  
