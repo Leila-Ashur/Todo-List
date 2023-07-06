@@ -1,100 +1,108 @@
-const userContainer = document.getElementById('Task');
-const successMessage = document.getElementById('Message');
-const addBtn = document.getElementById('add');
-const deleteBtn = document.getElementById('button2');
-const taskIdInput = document.getElementById('taskId');
-const getTodoById = async (userId) => {
-  try {
-    const response = await fetch(`https://dummyjson.com/todos/${userId}`);
-    const todo = await response.json();
-    return todo;
-  } catch (error) {
-    console.log(error);
-    return null;
-  }
-};
-const displayTodo = async (userId) => {
-  const todo = await getTodoById(userId);
-  if (todo) {
-    console.log(todo);
-    let li = document.createElement('li');
-    let userName = document.createElement('input');
-    let checkbox = document.createElement('input');
-    let deleteImg = document.createElement('img');
-    let gap = document.createElement('span');
+const taskList = document.getElementById('task');
+const newTaskInput = document.getElementById('new-task');
+function createTaskElement(task) {
+    const li = document.createElement('li');
+    const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
-    checkbox.checked = todo.completed;
-    userName.value = todo.todo;
-    userName.style.width = '500px';
-    userName.style.height = '20px';
-    checkbox.addEventListener('change', () => {
-      if (checkbox.checked) {
-        userName.style.textDecoration = 'line-through';
-      } else {
-        userName.style.textDecoration = 'none';
-      }
-    });
-    deleteImg.src = 'bin-removebg-preview.png';
-    deleteImg.style.width = '20px';
-    deleteImg.style.height = '20px';
-    deleteImg.addEventListener('click', () => {
-      deleteTodoById(userId);
-      li.remove();
-    });
-    gap.style.marginRight = '3px';
+    checkbox.onchange = () => markTaskAsDone(li);
+    const taskInput = document.createElement('input');
+    taskInput.type = 'text';
+    taskInput.value = task.todo;
+    taskInput.disabled = false;
+    const deleteIcon = document.createElement('img');
+    deleteIcon.src = 'bin-removebg-preview.png6gewq2';
+    deleteIcon.alt = 'Delete';
+    deleteIcon.className = 'delete-icon';
+    deleteIcon.onclick = () => deleteTask(li, task.id);
     li.appendChild(checkbox);
-    li.appendChild(userName);
-    li.appendChild(deleteImg);
-    li.appendChild(gap);
-    li.setAttribute('key', userId);
-    li.setAttribute('class', 'task');
-    userContainer.appendChild(li);
-    successMessage.textContent = 'Task Complete.';
-  } else {
-    console.log(`Todo with user ID ${userId} not found.`);
+    li.appendChild(taskInput);
+    li.appendChild(deleteIcon);
+    return li;
   }
-};
-const deleteTodoById = async (userId) => {
-  try {
-    const response = await fetch(`https://dummyjson.com/todos/${userId}`, {
-      method: 'DELETE'
-    });
-    if (!response.ok) {
-      throw new Error('Failed to delete todo');
-    }
-  } catch (error) {
-    console.log(error);
+  function fetchUserTodos(userId) {
+    fetch(`https://dummyjson.com/todos/user/${userId}`)
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        if (Array.isArray(data.todos)) {
+          data.todos.forEach(task => {
+            const taskElement = createTaskElement(task);
+            taskList.appendChild(taskElement);
+          });
+        } else {
+          console.error('Invalid data format.');
+        }
+      })
+      .catch(error => console.error(error));
   }
-};
-const deleteTasks = () => {
-  const tasks = document.getElementsByClassName('task');
-  while (tasks.length > 0) {
-    tasks[0].remove();
+  fetchUserTodos(50);
+
+  function addTask(newTask) {
+    const userId = 13; 
+    fetch('https://dummyjson.com/todos/add', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        todo: newTask,
+        completed: true,
+        userId: userId
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data); 
+        const taskElement = createTaskElement(data);
+        taskList.appendChild(taskElement);
+        newTaskInput.value = '';
+        showSuccessMessage('New task added');
+      })
+      .catch(error => console.error(error));
   }
-  successMessage.style.display = 'none';
-};
-addBtn.addEventListener('click', async () => {
-  const userId = parseInt(taskIdInput.value);
-  if (!isNaN(userId)) {
-    const todo = await getTodoById(userId);
-    if (todo) {
-      console.log(`Todo with user ID ${userId} Task Added.`);
-      successMessage.style.display = 'block';
-      successMessage.textContent = 'Task Added Successfuly.';
-      setTimeout(() => {
-        successMessage.style.display = 'none';
-      }, 1000);
-      displayTodo(userId);
-    } else {
-      console.log(`Todo with user ID ${userId} not found.`);
-    }
-  } else {
-    successMessage.style.display = 'block';
-    successMessage.textContent = 'Please enter a valid User ID.';
-  }
-});
-
-
-
-
+function updateTask(taskId, completed) {
+  fetch(`https://dummyjson.com/todos/${taskId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      completed: completed
+    })
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+    })
+    .catch(error => console.error(error));
+}
+function deleteTask(li, taskId) {
+  fetch(`https://dummyjson.com/todos/${taskId}`, {
+    method: 'DELETE'
+  })
+    .then(response => response.json())
+    .then(data => {
+      li.remove();
+      showSuccessMessage('Task deleted successfully');
+    })
+    .catch(error => console.error(error));
+}
+function markTaskAsDone(li, taskId) {
+  const checkbox = li.querySelector('input[type="checkbox"]');
+  const completed = checkbox.checked;
+  updateTask(taskId, completed);
+  li.classList.toggle('completed');
+  const taskInput = li.querySelector('input[type="text"]');
+  taskInput.style.textDecoration = completed ? 'line-through' : 'none';
+  showSuccessMessage('Task completed!');
+}
+function showSuccessMessage(message) {
+  const successMessage = document.createElement('p');
+  successMessage.classList.add('success-message');
+  successMessage.textContent = message;
+  document.body.appendChild(successMessage);
+  setTimeout(() => {
+    successMessage.remove();
+  }, 2000);
+}
 

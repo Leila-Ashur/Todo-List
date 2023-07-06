@@ -1,74 +1,50 @@
 body {
-  font-family: Arial, sans-serif;
-  background-color: #F5F5F5;
-  padding: 20px;
+  font-family: 'Times New Roman', Times, serif;
 }
-.form {
-  max-width: 500px;
-  margin: 0 auto;
-  background-color: #4CAF50;
-    padding: 20px;
+.todo-list {
+  margin: 20px auto;
+  max-width: 400px;
+  padding: 20px;
+  border: 1px solid #ccc;
   border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #4CAF50;
 }
 h1 {
   text-align: center;
-  color: #f1f3f1;
-}
-#taskId {
-  width: 80%;
-  padding: 10px;
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-#add {
-  background-color: #010701;
-  color: #FFFFFF;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-#add:hover {
-  background-color: #45A049;
+  color: #4CAF50;
+  font-size: 50px;
 }
 ul {
   list-style-type: none;
   padding: 0;
 }
-li.task {
+li {
+  margin-bottom: 10px;
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
-  border-radius: 4px;
-  padding: 10px;
 }
-.task input[type="checkbox"] {
-  margin-right: 10px;
-}
-.task input[type="text"] {
+input[type="text"] {
   flex: 1;
-  height: 100px;
-  padding: 10px;
+  padding: 5px;
+  padding-right: 160px;
+}
+.add-btn {
+  display: block;
+  margin-top: -2em;
+  padding: 5px;
+  background-color: #4CAF50;
+  color: #fff;
   border: none;
-  outline: none;
-}
-.task button {
-  background: none;
-  border: none;
-  padding: 0;
+  border-radius: 5px;
   cursor: pointer;
+  margin-left: 90%;
 }
-#button2 {
-  width: 24px;
-  height: 24px;
+.delete-icon {
+  margin-left: 10px;
   cursor: pointer;
+  height: 30%;
+  width: 5%;
 }
-#Message {
-  margin-top: 10px;
+.success-message {
   color: green;
-  display: none;
 }
-
-  
